@@ -1,0 +1,39 @@
+# Django project directories
+__pycache__/
+staticfiles/
+media/
+
+# Database
+*.sqlite3
+*.db
+
+# Environment variables
+.env
+
+# Python bytecode
+*.pyc
+*.pyo
+*.pyd
+
+# Development/IDE files
+*.pydevproject
+*.pydevworkspace
+.vscode/
+.idea/
+*.swp
+
+# Testing
+htmlcov/
+.coverage
+.tox/
+nosetests.xml
+coverage.xml
+
+# Miscellaneous
+*.log
+*.bak
+*.tmp
+
+# Dependency directories
+venv/
+env/
