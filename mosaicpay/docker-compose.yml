@@ -6,3 +6,24 @@ services:
       POSTGRES_DB: mosaicpay
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: codecta
+    container_name: mosaicpaydb
+    networks:
+      - mosaicpay_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    command: sh -c "sleep 10 && python manage.py makemigrations mosaicpay && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - mosaicpay_network
+
+networks:
+  mosaicpay_network:
