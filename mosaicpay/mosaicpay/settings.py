@@ -36,8 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'drf_yasg',
-    'mosaicpay'
+    'mosaicpay',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 ROOT_URLCONF = 'mosaicpay.urls'
+KAFKA_BOOTSTRAP_SERVERS = 'kafka:9092'
 
 TEMPLATES = [
     {
