@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Test
+from .models import Test,Account
 from confluent_kafka.admin import AdminClient, NewTopic
 from confluent_kafka import Producer
 from django.conf import settings
@@ -31,3 +31,11 @@ def send_message_to_topic(topic_name, message):
 class KafkaProducerSerializer(serializers.Serializer):
     message = serializers.CharField()
     topic_name = serializers.CharField()
+
+
+# ACCOUNT SERIALIZER
+
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = '__all__'
