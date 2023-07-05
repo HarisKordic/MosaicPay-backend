@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Test,Account
+from .models import Test,Account,Transaction
 from confluent_kafka.admin import AdminClient, NewTopic
 from confluent_kafka import Producer
 from django.conf import settings
@@ -43,3 +43,14 @@ class AccountSerializerUpdate(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = ('name', 'balance')
+
+# TRANSACTION SERIALIZER
+
+class TransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = '__all__'
+class TransactionSerializerUpdate(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = ('type', 'amount','transaction_state')

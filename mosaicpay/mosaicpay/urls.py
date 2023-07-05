@@ -1,6 +1,6 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from .views import TestViewSet, KafkaProducerEndpoint, AccountCrudViewSet
+from .views import TestViewSet, KafkaProducerEndpoint, AccountCrudViewSet,TransactionCrudViewSet
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
@@ -22,6 +22,8 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('kafka-test-post/', KafkaProducerEndpoint.as_view(), name='kafka-test-post'),
     path('account/', AccountCrudViewSet.as_view({'get': 'list', 'post': 'create'}), name='account-list'),
-    path('account/<int:pk>/', AccountCrudViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='account-detail'),
+    path('account/<int:pk>/', AccountCrudViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='transaction-detail'),
+    path('transaction/', TransactionCrudViewSet.as_view({'get': 'list', 'post': 'create'}), name='transaction-list'),
+    path('transaction/<int:pk>/', TransactionCrudViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='transaction-detail'),
     path('swagger/', include(router.urls)),
 ]
