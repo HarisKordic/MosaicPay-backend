@@ -39,3 +39,7 @@ class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = '__all__'
+class AccountSerializerUpdate(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = ('name', 'balance')

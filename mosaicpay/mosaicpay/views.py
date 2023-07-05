@@ -1,6 +1,6 @@
 from rest_framework import viewsets,status
 from .models import Test,Account
-from .serializers import TestSerializer,send_message_to_topic,AccountSerializer
+from .serializers import TestSerializer,send_message_to_topic,AccountSerializer,AccountSerializerUpdate
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -49,7 +49,8 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         if getattr(instance, '_prefetched_objects_cache', None):
@@ -60,3 +61,7 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
+    def get_serializer_class(self):
+        if self.request.method == 'PUT' or self.request.method == 'PATCH':
+            return AccountSerializerUpdate
+        return AccountSerializer
