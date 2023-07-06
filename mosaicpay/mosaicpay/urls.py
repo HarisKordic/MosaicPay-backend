@@ -1,6 +1,6 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from .views import TestViewSet, KafkaProducerEndpoint, AccountCrudViewSet,TransactionCrudViewSet,UserCrudViewSet,DocumentCruViewSet,UserRoleCrudViewSet,TransactionChangesLogRViewSet
+from .views import TestViewSet, KafkaProducerEndpoint, AccountCrudViewSet,TransactionCrudViewSet,UserCrudViewSet,DocumentCruViewSet,UserRoleCrudViewSet,TransactionChangesLogRViewSet,AccountChangesLogRViewSet
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
@@ -33,5 +33,7 @@ urlpatterns = [
     path('user-role/<int:pk>/', UserRoleCrudViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='user-role-detail'),
     path('transaction-changes-log/', TransactionChangesLogRViewSet.as_view({'get': 'list'}), name='transaction-changes-log-list'),
     path('transaction-changes-log/<int:pk>/', TransactionChangesLogRViewSet.as_view({'get': 'retrieve'}), name='transaction-changes-log-detail'),
+    path('account-changes-log/', AccountChangesLogRViewSet.as_view({'get': 'list'}), name='account-changes-log-list'),
+    path('account-changes-log/<int:pk>/', AccountChangesLogRViewSet.as_view({'get': 'retrieve'}), name='account-changes-log-detail'),
     path('swagger/', include(router.urls)),
 ]
