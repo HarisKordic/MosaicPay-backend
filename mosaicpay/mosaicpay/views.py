@@ -1,6 +1,6 @@
 from rest_framework import viewsets,status
 from .models import Test,Account,Transaction,User,Document
-from .serializers import TestSerializer,send_message_to_topic,AccountSerializer,AccountSerializerUpdate,TransactionSerializer,TransactionSerializerUpdate,UserSerializer,UserSerializerUpdate,DocumentSerializer,DocumentSerializerUpdate
+from .serializers import TestSerializer,send_message_to_topic,AccountSerializer,AccountSerializerUpdate,TransactionSerializer,TransactionSerializerUpdate,UserSerializer,UserSerializerUpdate,DocumentSerializer,DocumentSerializerUpdate,create_kafka_topic
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -33,6 +33,11 @@ class KafkaProducerEndpoint(APIView):
 
 #ACCOUNT CRUD
 class AccountCrudViewSet(viewsets.ModelViewSet):
+    account_created_topic_counter=0
+    account_deleted_topic_counter=0
+    account_updated_topic_counter=0
+
+
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
     def retrieve(self, request, *args, **kwargs):
@@ -40,6 +45,11 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
     def create(self, request, *args, **kwargs):
+        if AccountCrudViewSet.account_created_topic_counter==0:
+           send_message_to_topic("account_created", "CREATED AAAAAAAAAAAA")
+           AccountCrudViewSet.account_created_topic_counter+=1
+        else:
+            send_message_to_topic("account_created", "CREATED AAAAAAAAAAAA",is_initial=False)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -47,6 +57,11 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
+        if AccountCrudViewSet.account_updated_topic_counter==0:
+           send_message_to_topic("account_updated", "UPDATED AAAAAAAAAAAA")
+           AccountCrudViewSet.account_updated_topic_counter+=1
+        else:
+            send_message_to_topic("account_updated", "UPDATED AAAAAAAAAAAA",is_initial=False)
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer_class = self.get_serializer_class()
@@ -58,6 +73,11 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
+        if AccountCrudViewSet.account_deleted_topic_counter==0:
+           send_message_to_topic("account_deleted", "DELETED AAAAAAAAAAAA")
+           AccountCrudViewSet.account_deleted_topic_counter+=1
+        else:
+            send_message_to_topic("account_deleted", "DELETED AAAAAAAAAAAA",is_initial=False)
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)

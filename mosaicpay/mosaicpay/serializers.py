@@ -9,7 +9,7 @@ class TestSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-def create_kafka_topic(topic_name, num_partitions=1, replication_factor=1):
+def create_kafka_topic(topic_name, num_partitions=2, replication_factor=1):
     admin_client = AdminClient({'bootstrap.servers': settings.KAFKA_BOOTSTRAP_SERVERS})
     topic = NewTopic(
         topic_name,
@@ -19,8 +19,10 @@ def create_kafka_topic(topic_name, num_partitions=1, replication_factor=1):
     admin_client.create_topics([topic])
 
 
-def send_message_to_topic(topic_name, message):
-    create_kafka_topic(topic_name=topic_name)
+def send_message_to_topic(topic_name, message,is_initial=True):
+    if is_initial==True:
+        create_kafka_topic(topic_name=topic_name)
+    
     producer = Producer({
         'bootstrap.servers': settings.KAFKA_BOOTSTRAP_SERVERS
     })
