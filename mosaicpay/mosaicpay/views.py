@@ -1,6 +1,6 @@
 from rest_framework import viewsets,status
-from .models import Test,Account,Transaction,User,Document,UserRole
-from .serializers import TestSerializer,send_message_to_topic,AccountSerializer,AccountSerializerUpdate,TransactionSerializer,TransactionSerializerUpdate,UserSerializer,UserSerializerUpdate,DocumentSerializer,DocumentSerializerUpdate,UserRoleSerializer,UserRoleSerializerUpdate
+from .models import Test,Account,Transaction,User,Document,UserRole,TransactionChangesLog
+from .serializers import TestSerializer,send_message_to_topic,AccountSerializer,AccountSerializerUpdate,TransactionSerializer,TransactionSerializerUpdate,UserSerializer,UserSerializerUpdate,DocumentSerializer,DocumentSerializerUpdate,UserRoleSerializer,UserRoleSerializerUpdate,TransactionChangesLogSerializer 
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -250,3 +250,12 @@ class UserRoleCrudViewSet(viewsets.ModelViewSet):
         if self.request.method == 'PUT' or self.request.method == 'PATCH':
             return UserRoleSerializerUpdate
         return UserRoleSerializer
+
+#TRANSACTION CHANGES LOG R
+class TransactionChangesLogRViewSet(viewsets.ModelViewSet):
+    queryset = TransactionChangesLog.objects.all()
+    serializer_class = TransactionChangesLogSerializer
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
