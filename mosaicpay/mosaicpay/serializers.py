@@ -17,10 +17,14 @@ def create_kafka_topic(topic_name, num_partitions=2, replication_factor=1):
         num_partitions=num_partitions,
         replication_factor=replication_factor,
     )
+    topic.config = {
+        'cleanup.policy': 'compact', 
+        'retention.ms': '86400000' #24 hours retention
+    }
     admin_client.create_topics([topic])
 
 
-def send_message_to_topic(topic_name, message,is_initial=True):
+def send_message_to_topic(topic_name, message, key, is_initial=True):
     if is_initial==True:
         create_kafka_topic(topic_name=topic_name)
     
@@ -28,8 +32,10 @@ def send_message_to_topic(topic_name, message,is_initial=True):
         'bootstrap.servers': settings.KAFKA_BOOTSTRAP_SERVERS
     })
     
+    if key==None:
+        key="default_key"
     value = json.dumps(message).encode('utf-8')
-    producer.produce(topic_name, value=value)
+    producer.produce(topic_name, value=value, key=key)
     producer.flush()
 
 
@@ -40,6 +46,7 @@ class KafkaMessageSerializer(serializers.Serializer):
 class KafkaProducerSerializer(serializers.Serializer):
     message = KafkaMessageSerializer()
     topic_name = serializers.CharField()
+    key=serializers.CharField()
 
 
 # ACCOUNT SERIALIZER

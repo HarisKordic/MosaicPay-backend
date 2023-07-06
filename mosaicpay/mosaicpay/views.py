@@ -20,6 +20,8 @@ class KafkaProducerEndpoint(APIView):
             properties={
                 'message': openapi.Schema(type=openapi.TYPE_OBJECT),
                 'topic_name': openapi.Schema(type=openapi.TYPE_STRING),
+                'key': openapi.Schema(type=openapi.TYPE_STRING),
+
             },
             required=['message', 'topic_name'],
         ),
@@ -28,7 +30,8 @@ class KafkaProducerEndpoint(APIView):
     def post(self, request, *args, **kwargs):
         message = request.data.get('message')
         topic_name = request.data.get('topic_name')
-        send_message_to_topic(topic_name, message)
+        key = request.data.get('key')
+        send_message_to_topic(topic_name, message,key=key)
         return Response({"message": "Kafka message produced."})
 
 #ACCOUNT CRUD
