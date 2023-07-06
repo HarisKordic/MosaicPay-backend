@@ -37,7 +37,6 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
     account_deleted_topic_counter=0
     account_updated_topic_counter=0
 
-
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
     def retrieve(self, request, *args, **kwargs):
@@ -88,6 +87,12 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
 
 #TRANSACTION CRUD
 class TransactionCrudViewSet(viewsets.ModelViewSet):
+    transaction_created_topic_counter=0
+    transaction_deleted_topic_counter=0
+    transaction_updated_topic_counter=0
+    transaction_state_changed_topic_counter=0
+
+
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
     def retrieve(self, request, *args, **kwargs):
@@ -95,6 +100,12 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
     def create(self, request, *args, **kwargs):
+
+        if TransactionCrudViewSet.transaction_created_topic_counter==0:
+           send_message_to_topic("transaction_created", "CREATED AAAAAAAAAAAA")
+           TransactionCrudViewSet.transaction_created_topic_counter+=1
+        else: 
+           send_message_to_topic("transaction_created", "CREATED AAAAAAAAAAAA",is_initial=False)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -102,6 +113,15 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
+        if TransactionCrudViewSet.transaction_updated_topic_counter==0:
+           send_message_to_topic("transaction_updated", "UPDATED AAAAAAAAAAAA")
+           TransactionCrudViewSet.transaction_updated_topic_counter+=1
+        if TransactionCrudViewSet.transaction_state_changed_topic_counter==0:
+             send_message_to_topic("transaction_state_changed", "UPDATED AAAAAAAAAAAA")
+             TransactionCrudViewSet.transaction_state_changed_topic_counter+=1
+        else: 
+           send_message_to_topic("transaction_updated", "UPDATED AAAAAAAAAAAA",is_initial=False)
+           send_message_to_topic("transaction_state_changed", "UPDATED AAAAAAAAAAAA",is_initial=False)
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer_class = self.get_serializer_class()
@@ -113,6 +133,11 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
+        if TransactionCrudViewSet.transaction_deleted_topic_counter==0:
+           send_message_to_topic("transaction_deleted", "DELETED AAAAAAAAAAAA")
+           TransactionCrudViewSet.transaction_deleted_topic_counter+=1
+        else:
+            send_message_to_topic("transaction_deleted", "DELETED AAAAAAAAAAAA",is_initial=False)
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)

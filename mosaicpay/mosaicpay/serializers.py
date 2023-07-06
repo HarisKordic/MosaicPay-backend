@@ -14,7 +14,7 @@ def create_kafka_topic(topic_name, num_partitions=2, replication_factor=1):
     topic = NewTopic(
         topic_name,
         num_partitions=num_partitions,
-        replication_factor=replication_factor
+        replication_factor=replication_factor,
     )
     admin_client.create_topics([topic])
 
