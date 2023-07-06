@@ -18,7 +18,7 @@ class KafkaProducerEndpoint(APIView):
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
-                'message': openapi.Schema(type=openapi.TYPE_STRING),
+                'message': openapi.Schema(type=openapi.TYPE_OBJECT),
                 'topic_name': openapi.Schema(type=openapi.TYPE_STRING),
             },
             required=['message', 'topic_name'],

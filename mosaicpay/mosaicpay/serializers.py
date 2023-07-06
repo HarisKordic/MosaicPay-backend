@@ -3,6 +3,7 @@ from .models import Test,Account,Transaction,User,Document
 from confluent_kafka.admin import AdminClient, NewTopic
 from confluent_kafka import Producer
 from django.conf import settings
+import json
 class TestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Test
@@ -26,12 +27,18 @@ def send_message_to_topic(topic_name, message,is_initial=True):
     producer = Producer({
         'bootstrap.servers': settings.KAFKA_BOOTSTRAP_SERVERS
     })
-    producer.produce(topic_name, message.encode('utf-8'))
+    
+    value = json.dumps(message).encode('utf-8')
+    producer.produce(topic_name, value=value)
     producer.flush()
 
 
+class KafkaMessageSerializer(serializers.Serializer):
+    key = serializers.CharField()
+    value = serializers.DictField()
+
 class KafkaProducerSerializer(serializers.Serializer):
-    message = serializers.CharField()
+    message = KafkaMessageSerializer()
     topic_name = serializers.CharField()
 
 
