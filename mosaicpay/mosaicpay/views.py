@@ -8,7 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from datetime import date
 import json
-from .helper import convertAccountToJson,convertTransactionToJson
+from .helper import convertAccountToJson,convertTransactionToJson,get_partition_key
 
 # TEST
 class TestViewSet(viewsets.ReadOnlyModelViewSet):
@@ -51,10 +51,10 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
     def create(self, request, *args, **kwargs):
         if AccountCrudViewSet.account_created_topic_counter==0:
-           send_message_to_topic("account_created", "CREATED AAAAAAAAAAAA")
+           send_message_to_topic("account_created", "CREATED AAAAAAAAAAAA", None)
            AccountCrudViewSet.account_created_topic_counter+=1
         else:
-            send_message_to_topic("account_created", "CREATED AAAAAAAAAAAA",is_initial=False)
+            send_message_to_topic("account_created", "CREATED AAAAAAAAAAAA", None, is_initial=False)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -62,11 +62,12 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
+        key = get_partition_key(self.get_object().account_id)
         if AccountCrudViewSet.account_updated_topic_counter==0:
-           send_message_to_topic("account_updated", "UPDATED AAAAAAAAAAAA", None)
+           send_message_to_topic("account_updated", "UPDATED AAAAAAAAAAAA", key)
            AccountCrudViewSet.account_updated_topic_counter+=1
         else:
-            send_message_to_topic("account_updated", "UPDATED AAAAAAAAAAAA", None,is_initial=False)
+            send_message_to_topic("account_updated", "UPDATED AAAAAAAAAAAA", key, is_initial=False)
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer_class = self.get_serializer_class()
@@ -92,6 +93,7 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
 
+        key = get_partition_key(self.get_object().account_id)
         #Logging
         changeData = {
             'change_type':  json.dumps(convertAccountToJson(self.get_object())),
@@ -105,10 +107,10 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
         logSerializer.save()
 
         if AccountCrudViewSet.account_deleted_topic_counter==0:
-           send_message_to_topic("account_deleted", "DELETED AAAAAAAAAAAA", None)
+           send_message_to_topic("account_deleted", "DELETED AAAAAAAAAAAA", key)
            AccountCrudViewSet.account_deleted_topic_counter+=1
         else:
-            send_message_to_topic("account_deleted", "DELETED AAAAAAAAAAAA", None, is_initial=False)
+            send_message_to_topic("account_deleted", "DELETED AAAAAAAAAAAA", key, is_initial=False)
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)

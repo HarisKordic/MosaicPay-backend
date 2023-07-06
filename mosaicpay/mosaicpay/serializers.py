@@ -32,10 +32,11 @@ def send_message_to_topic(topic_name, message, key, is_initial=True):
         'bootstrap.servers': settings.KAFKA_BOOTSTRAP_SERVERS
     })
     
-    if key==None:
-        key="default_key"
+    partition=0
+    if key=="partition_1":
+        partition=1
     value = json.dumps(message).encode('utf-8')
-    producer.produce(topic_name, value=value, key=key)
+    producer.produce(topic_name, value=value, key=key, partition=partition)
     producer.flush()
 
 
