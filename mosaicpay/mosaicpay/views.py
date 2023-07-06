@@ -178,11 +178,24 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
+
+        #Logging
+        changeData = {
+            'change_type':  json.dumps(convertTransactionToJson(self.get_object())),
+            'change_date': date.today(),
+            'changed_by_user': User.objects.get(user_id=1).user_id, # TODO: retrieve user
+            'transaction': self.get_object().transaction_id
+        }
+
+        logSerializer = TransactionChangesLogSerializer(data=changeData)
+        logSerializer.is_valid(raise_exception=True)
+        logSerializer.save()
+
         if TransactionCrudViewSet.transaction_deleted_topic_counter==0:
-           send_message_to_topic("transaction_deleted", "DELETED AAAAAAAAAAAA")
+           send_message_to_topic("transaction_deleted", "DELETED AAAAAAAAAAAA", None)
            TransactionCrudViewSet.transaction_deleted_topic_counter+=1
         else:
-            send_message_to_topic("transaction_deleted", "DELETED AAAAAAAAAAAA",is_initial=False)
+            send_message_to_topic("transaction_deleted", "DELETED AAAAAAAAAAAA", None, is_initial=False)
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)

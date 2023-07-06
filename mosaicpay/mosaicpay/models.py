@@ -13,7 +13,7 @@ class Test(models.Model):
     
 #USER
 class User(models.Model):
-    user_id=models.AutoField(primary_key=True, max_length=4)
+    user_id=models.AutoField(primary_key=True)
     first_name=models.CharField(max_length=255)
     last_name=models.CharField(max_length=255)
     birthday=models.DateField(null=True)
@@ -29,7 +29,7 @@ class User(models.Model):
 
 #USER ROLE
 class UserRole(models.Model):
-    user_role_id=models.AutoField(primary_key=True, max_length=4)
+    user_role_id=models.AutoField(primary_key=True)
     name=models.CharField(max_length=255,unique=True)
     class Meta:
         verbose_name="UserRole"
@@ -48,7 +48,7 @@ class UserRoleUser(models.Model):
 
 # ACCOUNT
 class Account(models.Model):
-    account_id=models.AutoField(primary_key=True, max_length=4)
+    account_id=models.AutoField(primary_key=True)
     name=models.CharField(max_length=100)
     balance=models.DecimalField(decimal_places=2,max_digits=10)
     user=models.ForeignKey('User', on_delete=models.CASCADE,max_length=4)
@@ -61,7 +61,7 @@ class Account(models.Model):
 
 #ACCOUNT CHANGES LOG
 class AccountChangesLog(models.Model):
-    account_changes_log_id=models.AutoField(primary_key=True, max_length=4)
+    account_changes_log_id=models.AutoField(primary_key=True)
     change_type=models.CharField(max_length=255)
     change_date=models.DateField(auto_now=True)
     changed_by_user=models.ForeignKey('User', on_delete=models.CASCADE,max_length=4)
@@ -75,7 +75,7 @@ class AccountChangesLog(models.Model):
     
 #TRANSACTION
 class Transaction(models.Model):
-    transaction_id=models.AutoField(primary_key=True, max_length=4)
+    transaction_id=models.AutoField(primary_key=True)
     type=models.CharField(max_length=1)
     amount=models.DecimalField(decimal_places=2,max_digits=10)
     account=models.ForeignKey('Account', on_delete=models.CASCADE,max_length=4)
@@ -89,7 +89,7 @@ class Transaction(models.Model):
 
 #TRANSACTION STATE
 class TransactionState(models.Model):
-    transaction_state_id=models.AutoField(primary_key=True, max_length=4)
+    transaction_state_id=models.AutoField(primary_key=True)
     name=models.CharField(max_length=9,unique=True)
     class Meta:
         verbose_name="TransactionState"
@@ -100,11 +100,11 @@ class TransactionState(models.Model):
 
 # TRANSACTION CHANGES LOG
 class TransactionChangesLog(models.Model):
-    transaction_changes_log_id=models.AutoField(primary_key=True, max_length=4)
+    transaction_changes_log_id=models.AutoField(primary_key=True)
     change_type=models.CharField(max_length=255)
     change_date=models.DateField(auto_now=True)
     changed_by_user=models.ForeignKey('User', on_delete=models.CASCADE,max_length=4)
-    transaction=models.ForeignKey('Transaction', on_delete=models.CASCADE,max_length=4)
+    transaction=models.ForeignKey('Transaction', on_delete=models.SET_NULL,max_length=4,null=True)
     class Meta:
         verbose_name="TransactionChangesLog"
         verbose_name_plural="TransactionChangesLogs"
@@ -114,7 +114,7 @@ class TransactionChangesLog(models.Model):
 
 #DOCUMENT
 class Document(models.Model):
-    document_id=models.AutoField(primary_key=True, max_length=4)
+    document_id=models.AutoField(primary_key=True)
     url=models.CharField(max_length=2048,unique=True)
     user=models.ForeignKey('User', on_delete=models.CASCADE,max_length=4)
     class Meta:
