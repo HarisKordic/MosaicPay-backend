@@ -6,6 +6,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from datetime import date
+import json
+from .helper import convertAccountToJson
 
 # TEST
 class TestViewSet(viewsets.ReadOnlyModelViewSet):
@@ -59,11 +62,22 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
+        changeData = {
+            'change_type':  json.dumps(convertAccountToJson(self.get_object())),
+            'change_date': date.today(),
+            'changed_by_user': self.get_object().user.user_id,
+            'account': self.get_object().account_id
+        }
+
+        logSerializer = AccountChangesLogSerializer(data=changeData)
+        logSerializer.is_valid(raise_exception=True)
+        logSerializer.save()
+        
         if AccountCrudViewSet.account_updated_topic_counter==0:
-           send_message_to_topic("account_updated", "UPDATED AAAAAAAAAAAA")
+           send_message_to_topic("account_updated", "UPDATED AAAAAAAAAAAA", None)
            AccountCrudViewSet.account_updated_topic_counter+=1
         else:
-            send_message_to_topic("account_updated", "UPDATED AAAAAAAAAAAA",is_initial=False)
+            send_message_to_topic("account_updated", "UPDATED AAAAAAAAAAAA", None,is_initial=False)
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer_class = self.get_serializer_class()
