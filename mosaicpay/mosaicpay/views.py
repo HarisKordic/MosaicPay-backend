@@ -8,7 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from datetime import date
 import json
-from .helper import convertAccountToJson
+from .helper import convertAccountToJson,convertTransactionToJson
 
 # TEST
 class TestViewSet(viewsets.ReadOnlyModelViewSet):
@@ -78,7 +78,7 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
         changeData = {
             'change_type':  json.dumps(convertAccountToJson(self.get_object())),
             'change_date': date.today(),
-            'changed_by_user': self.get_object().user.user_id,
+            'changed_by_user': self.get_object().user.user_id, # TODO: retrieve user
             'account': self.get_object().account_id
         }
 
@@ -146,20 +146,33 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         if TransactionCrudViewSet.transaction_updated_topic_counter==0:
-           send_message_to_topic("transaction_updated", "UPDATED AAAAAAAAAAAA")
+           send_message_to_topic("transaction_updated", "UPDATED AAAAAAAAAAAA",None)
            TransactionCrudViewSet.transaction_updated_topic_counter+=1
         if TransactionCrudViewSet.transaction_state_changed_topic_counter==0:
-             send_message_to_topic("transaction_state_changed", "UPDATED AAAAAAAAAAAA")
+             send_message_to_topic("transaction_state_changed", "UPDATED AAAAAAAAAAAA",None)
              TransactionCrudViewSet.transaction_state_changed_topic_counter+=1
         else: 
-           send_message_to_topic("transaction_updated", "UPDATED AAAAAAAAAAAA",is_initial=False)
-           send_message_to_topic("transaction_state_changed", "UPDATED AAAAAAAAAAAA",is_initial=False)
+           send_message_to_topic("transaction_updated", "UPDATED AAAAAAAAAAAA", None, is_initial=False)
+           send_message_to_topic("transaction_state_changed", "UPDATED AAAAAAAAAAAA", None, is_initial=False)
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer_class = self.get_serializer_class()
         serializer = serializer_class(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+
+        #Logging
+        changeData = {
+            'change_type':  json.dumps(convertTransactionToJson(self.get_object())),
+            'change_date': date.today(),
+            'changed_by_user': User.objects.get(user_id=1).user_id, # TODO: retrieve user
+            'transaction': self.get_object().transaction_id
+        }
+
+        logSerializer = TransactionChangesLogSerializer(data=changeData)
+        logSerializer.is_valid(raise_exception=True)
+        logSerializer.save()
+
         if getattr(instance, '_prefetched_objects_cache', None):
             instance._prefetched_objects_cache = {}
         return Response(serializer.data)
