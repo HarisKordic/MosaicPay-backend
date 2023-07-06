@@ -1,6 +1,6 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from .views import TestViewSet, KafkaProducerEndpoint, AccountCrudViewSet,TransactionCrudViewSet,UserCrudViewSet,DocumentCruViewSet
+from .views import TestViewSet, KafkaProducerEndpoint, AccountCrudViewSet,TransactionCrudViewSet,UserCrudViewSet,DocumentCruViewSet,UserRoleCrudViewSet
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
@@ -29,5 +29,7 @@ urlpatterns = [
     path('user/<int:pk>/', UserCrudViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='user-detail'),
     path('document/', DocumentCruViewSet.as_view({'get': 'list', 'post': 'create'}), name='document-list'),
     path('document/<int:pk>/', DocumentCruViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update'}), name='document-detail'),
+    path('user-role/', UserRoleCrudViewSet.as_view({'get': 'list', 'post': 'create'}), name='user-role-list'),
+    path('user-role/<int:pk>/', UserRoleCrudViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='user-role-detail'),
     path('swagger/', include(router.urls)),
 ]

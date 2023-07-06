@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Test,Account,Transaction,User,Document
+from .models import Test,Account,Transaction,User,Document,UserRole
 from confluent_kafka.admin import AdminClient, NewTopic
 from confluent_kafka import Producer
 from django.conf import settings
@@ -92,4 +92,15 @@ class DocumentSerializerUpdate(serializers.ModelSerializer):
     class Meta:
         model = Document
         fields = ('url','document_id')
+
+# USER ROLES SERIALIZER
+
+class UserRoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserRole
+        fields = '__all__'
+class UserRoleSerializerUpdate(serializers.ModelSerializer):
+    class Meta:
+        model = UserRole
+        fields = ('user_role_id', 'name')
 
