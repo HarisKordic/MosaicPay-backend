@@ -65,7 +65,7 @@ class AccountChangesLog(models.Model):
     change_type=models.CharField(max_length=255)
     change_date=models.DateField(auto_now=True)
     changed_by_user=models.ForeignKey('User', on_delete=models.CASCADE,max_length=4)
-    account=models.ForeignKey('Account', on_delete=models.CASCADE,max_length=4)
+    account=models.ForeignKey('Account', on_delete=models.SET_NULL,max_length=4,null=True)
     class Meta:
         verbose_name="AccountChangesLog"
         verbose_name_plural="AccountChangesLogs"

@@ -62,17 +62,6 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
-        changeData = {
-            'change_type':  json.dumps(convertAccountToJson(self.get_object())),
-            'change_date': date.today(),
-            'changed_by_user': self.get_object().user.user_id,
-            'account': self.get_object().account_id
-        }
-
-        logSerializer = AccountChangesLogSerializer(data=changeData)
-        logSerializer.is_valid(raise_exception=True)
-        logSerializer.save()
-        
         if AccountCrudViewSet.account_updated_topic_counter==0:
            send_message_to_topic("account_updated", "UPDATED AAAAAAAAAAAA", None)
            AccountCrudViewSet.account_updated_topic_counter+=1
@@ -84,16 +73,42 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
         serializer = serializer_class(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+
+        #Logging
+        changeData = {
+            'change_type':  json.dumps(convertAccountToJson(self.get_object())),
+            'change_date': date.today(),
+            'changed_by_user': self.get_object().user.user_id,
+            'account': self.get_object().account_id
+        }
+
+        logSerializer = AccountChangesLogSerializer(data=changeData)
+        logSerializer.is_valid(raise_exception=True)
+        logSerializer.save()
+
         if getattr(instance, '_prefetched_objects_cache', None):
             instance._prefetched_objects_cache = {}
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
+
+        #Logging
+        changeData = {
+            'change_type':  json.dumps(convertAccountToJson(self.get_object())),
+            'change_date': date.today(),
+            'changed_by_user': self.get_object().user.user_id,
+            'account': self.get_object().account_id
+        }
+
+        logSerializer = AccountChangesLogSerializer(data=changeData)
+        logSerializer.is_valid(raise_exception=True)
+        logSerializer.save()
+
         if AccountCrudViewSet.account_deleted_topic_counter==0:
-           send_message_to_topic("account_deleted", "DELETED AAAAAAAAAAAA")
+           send_message_to_topic("account_deleted", "DELETED AAAAAAAAAAAA", None)
            AccountCrudViewSet.account_deleted_topic_counter+=1
         else:
-            send_message_to_topic("account_deleted", "DELETED AAAAAAAAAAAA",is_initial=False)
+            send_message_to_topic("account_deleted", "DELETED AAAAAAAAAAAA", None, is_initial=False)
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
