@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Test,Account,Transaction,User,Document,UserRole,TransactionChangesLog,AccountChangesLog
+from .models import Test,Account,Transaction,User,Document,UserRole,TransactionChangesLog,AccountChangesLog,UserRoleUser
 from confluent_kafka.admin import AdminClient, NewTopic
 from confluent_kafka import Producer
 from django.conf import settings
@@ -93,7 +93,7 @@ class DocumentSerializerUpdate(serializers.ModelSerializer):
         model = Document
         fields = ('url','document_id')
 
-# USER ROLES SERIALIZER
+# USER ROLE SERIALIZER
 
 class UserRoleSerializer(serializers.ModelSerializer):
     class Meta:
@@ -103,6 +103,17 @@ class UserRoleSerializerUpdate(serializers.ModelSerializer):
     class Meta:
         model = UserRole
         fields = ('user_role_id', 'name')
+
+# USER ROLES SERIALIZER
+
+class UserRolesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserRoleUser
+        fields = '__all__'
+class UserRolesSerializerUpdate(serializers.ModelSerializer):
+    class Meta:
+        model = UserRoleUser
+        fields = ('user_role',)
 
 # TRANSACTION CHANGES LOG SERIALIZER
 class TransactionChangesLogSerializer(serializers.ModelSerializer):
