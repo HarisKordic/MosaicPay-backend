@@ -1,7 +1,6 @@
 from .models import Account,Transaction
-import string
 import numbers
-def convertAccountToJson(account:Account)->string:
+def convertAccountToJson(account:Account)->str:
     account_dict = {
     'account_id': account.account_id,
     'name': account.name,
@@ -10,7 +9,7 @@ def convertAccountToJson(account:Account)->string:
     }
     return account_dict
 
-def convertTransactionToJson(transaction:Transaction)->string:
+def convertTransactionToJson(transaction:Transaction)->str:
     transaction_dict = {
     'transaction_id': transaction.transaction_id,
     'type': transaction.type,

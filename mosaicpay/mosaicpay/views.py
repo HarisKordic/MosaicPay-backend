@@ -57,27 +57,28 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
 
         key = get_partition_key(serializer.instance.account_id)
         if AccountCrudViewSet.account_created_topic_counter==0:
-           send_message_to_topic("account_created", "CREATED AAAAAAAAAAAA", key)
+           send_message_to_topic("account_created", json.loads(json.dumps(convertAccountToJson(serializer.instance))), key)
            AccountCrudViewSet.account_created_topic_counter+=1
         else:
-            send_message_to_topic("account_created", "CREATED AAAAAAAAAAAA", key, is_initial=False)
+            send_message_to_topic("account_created",  json.loads(json.dumps(convertAccountToJson(serializer.instance))), key, is_initial=False)
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
         key = get_partition_key(self.get_object().account_id)
-        if AccountCrudViewSet.account_updated_topic_counter==0:
-           send_message_to_topic("account_updated", "UPDATED AAAAAAAAAAAA", key)
-           AccountCrudViewSet.account_updated_topic_counter+=1
-        else:
-            send_message_to_topic("account_updated", "UPDATED AAAAAAAAAAAA", key, is_initial=False)
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer_class = self.get_serializer_class()
         serializer = serializer_class(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+
+        if AccountCrudViewSet.account_updated_topic_counter==0:
+           send_message_to_topic("account_updated", convertAccountToJson(self.get_object()), key)
+           AccountCrudViewSet.account_updated_topic_counter+=1
+        else:
+            send_message_to_topic("account_updated",convertAccountToJson(self.get_object()), key, is_initial=False)
 
         #Logging
         changeData = {
@@ -111,13 +112,14 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
         logSerializer.save()
 
         if AccountCrudViewSet.account_deleted_topic_counter==0:
-           send_message_to_topic("account_deleted", "DELETED AAAAAAAAAAAA", key)
+           send_message_to_topic("account_deleted", convertAccountToJson(self.get_object()), key)
            AccountCrudViewSet.account_deleted_topic_counter+=1
         else:
-            send_message_to_topic("account_deleted", "DELETED AAAAAAAAAAAA", key, is_initial=False)
+            send_message_to_topic("account_deleted", convertAccountToJson(self.get_object()), key, is_initial=False)
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
     def get_serializer_class(self):
         if self.request.method == 'PUT' or self.request.method == 'PATCH':
             return AccountSerializerUpdate
