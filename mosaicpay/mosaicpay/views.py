@@ -147,15 +147,17 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
+        key = get_partition_key(self.get_object().account_id)
+
         if TransactionCrudViewSet.transaction_updated_topic_counter==0:
-           send_message_to_topic("transaction_updated", "UPDATED AAAAAAAAAAAA",None)
+           send_message_to_topic("transaction_updated", "UPDATED AAAAAAAAAAAA",key)
            TransactionCrudViewSet.transaction_updated_topic_counter+=1
         if TransactionCrudViewSet.transaction_state_changed_topic_counter==0:
-             send_message_to_topic("transaction_state_changed", "UPDATED AAAAAAAAAAAA",None)
+             send_message_to_topic("transaction_state_changed", "UPDATED AAAAAAAAAAAA",key)
              TransactionCrudViewSet.transaction_state_changed_topic_counter+=1
         else: 
-           send_message_to_topic("transaction_updated", "UPDATED AAAAAAAAAAAA", None, is_initial=False)
-           send_message_to_topic("transaction_state_changed", "UPDATED AAAAAAAAAAAA", None, is_initial=False)
+           send_message_to_topic("transaction_updated", "UPDATED AAAAAAAAAAAA", key, is_initial=False)
+           send_message_to_topic("transaction_state_changed", "UPDATED AAAAAAAAAAAA", key, is_initial=False)
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer_class = self.get_serializer_class()
@@ -180,6 +182,7 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
+        key = get_partition_key(self.get_object().account_id)
 
         #Logging
         changeData = {
@@ -194,10 +197,10 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
         logSerializer.save()
 
         if TransactionCrudViewSet.transaction_deleted_topic_counter==0:
-           send_message_to_topic("transaction_deleted", "DELETED AAAAAAAAAAAA", None)
+           send_message_to_topic("transaction_deleted", "DELETED AAAAAAAAAAAA", key)
            TransactionCrudViewSet.transaction_deleted_topic_counter+=1
         else:
-            send_message_to_topic("transaction_deleted", "DELETED AAAAAAAAAAAA", None, is_initial=False)
+            send_message_to_topic("transaction_deleted", "DELETED AAAAAAAAAAAA", key, is_initial=False)
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
