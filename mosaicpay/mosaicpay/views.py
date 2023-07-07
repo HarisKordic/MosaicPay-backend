@@ -147,10 +147,10 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
 
         key = get_partition_key(serializer.instance.transaction_id)
         if TransactionCrudViewSet.transaction_created_topic_counter==0:
-           send_message_to_topic("transaction_created", "CREATED AAAAAAAAAAAA", key)
+           send_message_to_topic("transaction_created", json.loads(json.dumps(convertTransactionToJson(serializer.instance))), key)
            TransactionCrudViewSet.transaction_created_topic_counter+=1
         else: 
-           send_message_to_topic("transaction_created", "CREATED AAAAAAAAAAAA", key, is_initial=False)
+           send_message_to_topic("transaction_created", json.loads(json.dumps(convertTransactionToJson(serializer.instance))), key, is_initial=False)
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -170,17 +170,17 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
         transaction_state_changed = old_transaction_state != new_transaction_state
         
         if TransactionCrudViewSet.transaction_updated_topic_counter==0:
-           send_message_to_topic("transaction_updated", "UPDATED AAAAAAAAAAAA",key)
+           send_message_to_topic("transaction_updated",convertTransactionToJson(self.get_object()),key)
            TransactionCrudViewSet.transaction_updated_topic_counter+=1
         else: 
-           send_message_to_topic("transaction_updated", "UPDATED AAAAAAAAAAAA", key, is_initial=False)
+           send_message_to_topic("transaction_updated", convertTransactionToJson(self.get_object()), key, is_initial=False)
 
         if TransactionCrudViewSet.transaction_state_changed_topic_counter==0 and transaction_state_changed==True:
-             send_message_to_topic("transaction_state_changed", "UPDATED AAAAAAAAAAAA",key)
+             send_message_to_topic("transaction_state_changed", convertTransactionToJson(self.get_object()),key)
              TransactionCrudViewSet.transaction_state_changed_topic_counter+=1
 
         elif TransactionCrudViewSet.transaction_state_changed_topic_counter>=1 and transaction_state_changed==True:
-             send_message_to_topic("transaction_state_changed", "UPDATED AAAAAAAAAAAA", key, is_initial=False)
+             send_message_to_topic("transaction_state_changed", convertTransactionToJson(self.get_object()), key, is_initial=False)
 
         #Logging
         changeData = {
@@ -214,10 +214,10 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
         logSerializer.save()
 
         if TransactionCrudViewSet.transaction_deleted_topic_counter==0:
-           send_message_to_topic("transaction_deleted", "DELETED AAAAAAAAAAAA", key)
+           send_message_to_topic("transaction_deleted", convertTransactionToJson(self.get_object()), key)
            TransactionCrudViewSet.transaction_deleted_topic_counter+=1
         else:
-            send_message_to_topic("transaction_deleted", "DELETED AAAAAAAAAAAA", key, is_initial=False)
+            send_message_to_topic("transaction_deleted", convertTransactionToJson(self.get_object()), key, is_initial=False)
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
