@@ -103,7 +103,9 @@ class UserSerializerRegister(serializers.ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
-
+class LoginSerializer(serializers.Serializer):
+    email = serializers.CharField()
+    password = serializers.CharField()
 # DOCUMENT SERIALIZER
 
 class DocumentSerializer(serializers.ModelSerializer):

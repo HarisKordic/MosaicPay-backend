@@ -26,7 +26,20 @@ class RegisterViewSet(viewsets.ModelViewSet):
 
 
 #LOGIN
-class LoginView(APIView):
+class LoginViewSet(APIView):
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'email': openapi.Schema(type=openapi.TYPE_STRING),
+                'password': openapi.Schema(type=openapi.TYPE_STRING),
+
+            },
+            required=['email', 'password'],
+        ),
+        
+        operation_description="Login and gain JWT token."
+    )
     def post(self, request):
         email = request.data['email']
         password = request.data['password']
