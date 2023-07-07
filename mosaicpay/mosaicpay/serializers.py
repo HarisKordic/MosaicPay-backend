@@ -77,7 +77,7 @@ class TransactionSerializerUpdate(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ('user_id','first_name', 'last_name', 'email','birthday')
     def create(self,validated_data):
         password=validated_data.pop('password',None)
         instance=self.Meta.model(**validated_data)
@@ -95,6 +95,9 @@ class UserSerializerRegister(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('email', 'password')
+        extra_kwargs={
+            'password': {'write_only':True}
+        }
     def create(self,validated_data):
         password=validated_data.pop('password',None)
         instance=self.Meta.model(**validated_data)
@@ -103,6 +106,8 @@ class UserSerializerRegister(serializers.ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
+
+# LOGIN SERIALIZER
 class LoginSerializer(serializers.Serializer):
     email = serializers.CharField()
     password = serializers.CharField()
