@@ -10,6 +10,7 @@ from datetime import date,timedelta,datetime
 import json
 from .helper import convertAccountToJson,convertTransactionToJson,get_partition_key
 import jwt
+from rest_framework.exceptions import AuthenticationFailed
 
 #REGISTER
 
@@ -72,7 +73,17 @@ class LoginViewSet(APIView):
 class ParseUserFromJwtTokenViewSet(APIView):
     def get(self, request):
        token= request.COOKIES.get('token')
-       return Response(token)
+
+       if not token:
+           raise AuthenticationFailed('Unauthenticated!')
+       try:
+           payload=jwt.decode(token,'secret',algorithms=['HS256'])
+       except jwt.ExpiredSignatureError:
+           raise AuthenticationFailed('Unauthenticated!')
+       
+       user=User.objects.get(user_id=payload['id'])
+       serializer=UserSerializer(user)
+       return Response(serializer.data)
 
 
 # TEST
