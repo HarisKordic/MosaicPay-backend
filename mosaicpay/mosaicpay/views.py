@@ -1,14 +1,45 @@
 from rest_framework import viewsets,status
 from .models import Test,Account,Transaction,User,Document,UserRole,TransactionChangesLog,AccountChangesLog,UserRoleUser
-from .serializers import TestSerializer,send_message_to_topic,AccountSerializer,AccountSerializerUpdate,TransactionSerializer,TransactionSerializerUpdate,UserSerializer,UserSerializerUpdate,DocumentSerializer,DocumentSerializerUpdate,UserRoleSerializer,UserRoleSerializerUpdate,TransactionChangesLogSerializer ,AccountChangesLogSerializer,UserRolesSerializer,UserRolesSerializerUpdate
+from .serializers import TestSerializer,send_message_to_topic,AccountSerializer,AccountSerializerUpdate,TransactionSerializer,TransactionSerializerUpdate,UserSerializer,UserSerializerUpdate,DocumentSerializer,DocumentSerializerUpdate,UserRoleSerializer,UserRoleSerializerUpdate,TransactionChangesLogSerializer ,AccountChangesLogSerializer,UserRolesSerializer,UserRolesSerializerUpdate,UserSerializerRegister
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from datetime import date
+from rest_framework.exceptions import AuthenticationFailed
 import json
 from .helper import convertAccountToJson,convertTransactionToJson,get_partition_key
+
+
+#REGISTER
+
+class RegisterViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializerRegister
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+#LOGIN
+class LoginView(APIView):
+    def post(self, request):
+        email = request.data['email']
+        password = request.data['password']
+
+        user = User.objects.filter(email=email).first()
+
+        if user is None:
+            raise AuthenticationFailed('User not found!')
+        if not user.check_password(password):
+            raise AuthenticationFailed('Incorrect password!')
+        
+        return Response('Successfull login!')
+
 
 # TEST
 class TestViewSet(viewsets.ReadOnlyModelViewSet):

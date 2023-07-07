@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import AbstractUser
 class Test(models.Model):
     id = models.AutoField(primary_key=True)
     value = models.IntegerField()
@@ -12,7 +12,7 @@ class Test(models.Model):
         return self.name
     
 #USER
-class User(models.Model):
+class User(AbstractUser):
     user_id=models.AutoField(primary_key=True)
     first_name=models.CharField(max_length=255)
     last_name=models.CharField(max_length=255)
@@ -20,12 +20,18 @@ class User(models.Model):
     email=models.EmailField(max_length=255,unique=True)
     password=models.CharField(max_length=255)
 
+    username=None
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS=[]
+
     class Meta:
         verbose_name="User"
         verbose_name_plural="Users"
         db_table="user"
     def __str__(self) -> str:
         return self.first_name +" "+self.last_name
+    
+    
 
 #USER ROLE
 class UserRole(models.Model):
