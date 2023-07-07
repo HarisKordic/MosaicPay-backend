@@ -154,23 +154,31 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
-        key = get_partition_key(self.get_object().account_id)
+        key = get_partition_key(self.get_object().transaction_id)
 
-        if TransactionCrudViewSet.transaction_updated_topic_counter==0:
-           send_message_to_topic("transaction_updated", "UPDATED AAAAAAAAAAAA",key)
-           TransactionCrudViewSet.transaction_updated_topic_counter+=1
-        if TransactionCrudViewSet.transaction_state_changed_topic_counter==0:
-             send_message_to_topic("transaction_state_changed", "UPDATED AAAAAAAAAAAA",key)
-             TransactionCrudViewSet.transaction_state_changed_topic_counter+=1
-        else: 
-           send_message_to_topic("transaction_updated", "UPDATED AAAAAAAAAAAA", key, is_initial=False)
-           send_message_to_topic("transaction_state_changed", "UPDATED AAAAAAAAAAAA", key, is_initial=False)
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
+        old_transaction_state = instance.transaction_state  # Store the old transaction_state
         serializer_class = self.get_serializer_class()
         serializer = serializer_class(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+        
+        new_transaction_state = self.get_object().transaction_state  # Get the new transaction_state
+        transaction_state_changed = old_transaction_state != new_transaction_state
+        
+        if TransactionCrudViewSet.transaction_updated_topic_counter==0:
+           send_message_to_topic("transaction_updated", "UPDATED AAAAAAAAAAAA",key)
+           TransactionCrudViewSet.transaction_updated_topic_counter+=1
+        else: 
+           send_message_to_topic("transaction_updated", "UPDATED AAAAAAAAAAAA", key, is_initial=False)
+
+        if TransactionCrudViewSet.transaction_state_changed_topic_counter==0 and transaction_state_changed==True:
+             send_message_to_topic("transaction_state_changed", "UPDATED AAAAAAAAAAAA",key)
+             TransactionCrudViewSet.transaction_state_changed_topic_counter+=1
+
+        elif TransactionCrudViewSet.transaction_state_changed_topic_counter>=1 and transaction_state_changed==True:
+             send_message_to_topic("transaction_state_changed", "UPDATED AAAAAAAAAAAA", key, is_initial=False)
 
         #Logging
         changeData = {
@@ -189,7 +197,7 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
-        key = get_partition_key(self.get_object().account_id)
+        key = get_partition_key(self.get_object().transaction_id)
 
         #Logging
         changeData = {
