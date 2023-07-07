@@ -87,6 +87,17 @@ class ParseUserFromJwtTokenViewSet(APIView):
        return Response(serializer.data)
 
 
+# LOGOUT
+
+class LogoutViewSet(APIView):
+    def post(self, request):
+
+        response=Response()
+        response.delete_cookie('token')
+        response.data='Logout successfull!'
+        response.status=status.HTTP_200_OK
+        return response
+
 # TEST
 class TestViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Test.objects.all()
