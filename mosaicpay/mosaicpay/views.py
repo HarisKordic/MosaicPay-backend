@@ -50,14 +50,18 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
     def create(self, request, *args, **kwargs):
-        if AccountCrudViewSet.account_created_topic_counter==0:
-           send_message_to_topic("account_created", "CREATED AAAAAAAAAAAA", None)
-           AccountCrudViewSet.account_created_topic_counter+=1
-        else:
-            send_message_to_topic("account_created", "CREATED AAAAAAAAAAAA", None, is_initial=False)
+        
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+
+        key = get_partition_key(serializer.instance.account_id)
+        if AccountCrudViewSet.account_created_topic_counter==0:
+           send_message_to_topic("account_created", "CREATED AAAAAAAAAAAA", key)
+           AccountCrudViewSet.account_created_topic_counter+=1
+        else:
+            send_message_to_topic("account_created", "CREATED AAAAAAAAAAAA", key, is_initial=False)
+
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
@@ -135,14 +139,17 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
     def create(self, request, *args, **kwargs):
 
-        if TransactionCrudViewSet.transaction_created_topic_counter==0:
-           send_message_to_topic("transaction_created", "CREATED AAAAAAAAAAAA")
-           TransactionCrudViewSet.transaction_created_topic_counter+=1
-        else: 
-           send_message_to_topic("transaction_created", "CREATED AAAAAAAAAAAA",is_initial=False)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+
+        key = get_partition_key(serializer.instance.transaction_id)
+        if TransactionCrudViewSet.transaction_created_topic_counter==0:
+           send_message_to_topic("transaction_created", "CREATED AAAAAAAAAAAA", key)
+           TransactionCrudViewSet.transaction_created_topic_counter+=1
+        else: 
+           send_message_to_topic("transaction_created", "CREATED AAAAAAAAAAAA", key, is_initial=False)
+
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
