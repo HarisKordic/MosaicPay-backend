@@ -6,11 +6,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from datetime import date
-from rest_framework.exceptions import AuthenticationFailed
+from datetime import date,timedelta,datetime
 import json
 from .helper import convertAccountToJson,convertTransactionToJson,get_partition_key
-
+import jwt
 
 #REGISTER
 
@@ -47,11 +46,33 @@ class LoginViewSet(APIView):
         user = User.objects.filter(email=email).first()
 
         if user is None:
-            raise AuthenticationFailed('User not found!')
+            return Response('User not found!',status=status.HTTP_404_NOT_FOUND)
         if not user.check_password(password):
-            raise AuthenticationFailed('Incorrect password!')
+            return Response('Incorrect password!',status=status.HTTP_401_UNAUTHORIZED)
         
-        return Response('Successfull login!')
+        payload={
+            "id":user.user_id,
+            "exp":datetime.utcnow().__add__(timedelta(days=30)),
+            "iat":datetime.utcnow()
+        }
+        headers={
+        "typ": "JWT",
+        "alg": "HS256"
+        }
+
+        token=jwt.encode(payload=payload,key='secret',algorithm='HS256',headers=headers)
+
+        response=Response()
+        response.set_cookie(key='token',value=token,httponly=False)
+        response.data={"token":token}
+        response.status=status.HTTP_200_OK
+        return response
+
+#PARSE USER FROM TOKEN
+class ParseUserFromJwtTokenViewSet(APIView):
+    def get(self, request):
+       token= request.COOKIES.get('token')
+       return Response(token)
 
 
 # TEST
