@@ -68,7 +68,7 @@ class LoginViewSet(APIView):
         token=jwt.encode(payload=payload,key='secret',algorithm='HS256',headers=headers)
 
         response=Response()
-        response.set_cookie(key='token',value=token,httponly=False)
+        response.set_cookie(key='token', value=token, httponly=False, samesite='None', domain='localhost', path='/')
         response.data={"token":token}
         response.status=status.HTTP_200_OK
         return response
