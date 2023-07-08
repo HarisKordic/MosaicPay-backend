@@ -11,6 +11,9 @@ import json
 from .helper import convertAccountToJson,convertTransactionToJson,get_partition_key
 import jwt
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
+from custom_auth import JWTAuthentication
 
 #REGISTER
 
@@ -85,7 +88,7 @@ class ParseUserFromJwtTokenViewSet(APIView):
        user=User.objects.get(user_id=payload['id'])
        serializer=UserSerializer(user)
        return Response(serializer.data)
-
+    authentication_classes = [JWTAuthentication]
 
 # LOGOUT
 
@@ -97,6 +100,7 @@ class LogoutViewSet(APIView):
         response.data='Logout successfull!'
         response.status=status.HTTP_200_OK
         return response
+    authentication_classes = [JWTAuthentication]
 
 # TEST
 class TestViewSet(viewsets.ReadOnlyModelViewSet):
@@ -212,6 +216,8 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
         if self.request.method == 'PUT' or self.request.method == 'PATCH':
             return AccountSerializerUpdate
         return AccountSerializer
+    authentication_classes = [JWTAuthentication]
+
 
 #TRANSACTION CRUD
 class TransactionCrudViewSet(viewsets.ModelViewSet):
@@ -313,6 +319,7 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
         if self.request.method == 'PUT' or self.request.method == 'PATCH':
             return TransactionSerializerUpdate
         return TransactionSerializer
+    authentication_classes = [JWTAuthentication]
 
 #USER CRUD
 class UserCrudViewSet(viewsets.ModelViewSet):
@@ -379,6 +386,7 @@ class DocumentCruViewSet(viewsets.ModelViewSet):
         if self.request.method == 'PUT' or self.request.method == 'PATCH':
             return DocumentSerializerUpdate
         return DocumentSerializer
+    authentication_classes = [JWTAuthentication]
 
 
 #USER ROLE CRUD
@@ -415,6 +423,7 @@ class UserRoleCrudViewSet(viewsets.ModelViewSet):
         if self.request.method == 'PUT' or self.request.method == 'PATCH':
             return UserRoleSerializerUpdate
         return UserRoleSerializer
+    authentication_classes = [JWTAuthentication]
     
 
 #USER ROLES CRUD
@@ -451,7 +460,7 @@ class UserRolesCrudViewSet(viewsets.ModelViewSet):
         if self.request.method == 'PUT' or self.request.method == 'PATCH':
             return UserRolesSerializerUpdate
         return UserRolesSerializer
-
+    authentication_classes = [JWTAuthentication]
 
 #TRANSACTION CHANGES LOG R
 class TransactionChangesLogRViewSet(viewsets.ModelViewSet):
