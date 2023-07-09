@@ -14,7 +14,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from custom_auth import JWTAuthentication
-
+from django.shortcuts import get_object_or_404
 #REGISTER
 
 class RegisterViewSet(viewsets.ModelViewSet):
@@ -135,12 +135,25 @@ class AccountCrudViewSet(viewsets.ModelViewSet):
     account_deleted_topic_counter=0
     account_updated_topic_counter=0
 
-    queryset = Account.objects.all()
     serializer_class = AccountSerializer
+
+    def get_queryset(self):
+        parse_user_view = ParseUserFromJwtTokenViewSet()
+        parse_user_response = parse_user_view.get(self.request)
+
+        if parse_user_response.status_code != 200:
+            return parse_user_response
+
+        user_data = parse_user_response.data
+        user_id = user_data['user_id']
+        queryset = Account.objects.filter(user_id=user_id)
+        return queryset
+
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+    
     def create(self, request, *args, **kwargs):
         
         serializer = self.get_serializer(data=request.data)
