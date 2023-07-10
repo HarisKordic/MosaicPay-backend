@@ -3,7 +3,8 @@ from rest_framework.routers import DefaultRouter
 from .views import TestViewSet, KafkaProducerEndpoint, AccountCrudViewSet,TransactionCrudViewSet,UserCrudViewSet,DocumentCruViewSet,UserRoleCrudViewSet,TransactionChangesLogRViewSet,AccountChangesLogRViewSet, UserRolesCrudViewSet,RegisterViewSet,LoginViewSet,ParseUserFromJwtTokenViewSet,LogoutViewSet
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-
+from django.conf import settings
+from django.conf.urls.static import static
 router = DefaultRouter()
 router.register(r'test', TestViewSet, basename='test')
 
@@ -41,5 +42,5 @@ urlpatterns = [
     path('auth/login', LoginViewSet.as_view(), name='login'),
     path('auth/logout', LogoutViewSet.as_view(), name='logout'),
     path('auth/get-user', ParseUserFromJwtTokenViewSet.as_view(), name='get-user'),
-    path('swagger/', include(router.urls)),
-]
+    path('api/', include(router.urls)),
+] + static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)

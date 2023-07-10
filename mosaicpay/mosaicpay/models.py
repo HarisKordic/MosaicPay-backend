@@ -121,7 +121,7 @@ class TransactionChangesLog(models.Model):
 #DOCUMENT
 class Document(models.Model):
     document_id=models.AutoField(primary_key=True)
-    url=models.CharField(max_length=2048,unique=True)
+    url=models.FileField(upload_to='storage/',null=True)
     type=models.CharField(max_length=4, default="jpg")
     user=models.ForeignKey('User', on_delete=models.CASCADE,max_length=4)
     account=models.ForeignKey('Account', on_delete=models.CASCADE,max_length=4,null=True)
