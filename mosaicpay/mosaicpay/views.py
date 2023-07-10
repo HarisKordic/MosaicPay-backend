@@ -242,10 +242,29 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
 
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = TransactionSerializer(queryset, many=True)
+        data = serializer.data
+
+        for i, transaction_data in enumerate(data):
+            account_data = queryset[i].account
+            account_serializer = AccountSerializer(account_data)
+            transaction_data['account'] = account_serializer.data
+
+        return Response(data)
+
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+        serializer = TransactionSerializer(instance)
+        data = serializer.data
+
+        account_data = instance.account
+        account_serializer = AccountSerializer(account_data)
+        data['account'] = account_serializer.data
+
+        return Response(data)
     def create(self, request, *args, **kwargs):
 
         serializer = self.get_serializer(data=request.data)
