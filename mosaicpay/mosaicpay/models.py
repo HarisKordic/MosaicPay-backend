@@ -122,6 +122,7 @@ class TransactionChangesLog(models.Model):
 class Document(models.Model):
     document_id=models.AutoField(primary_key=True)
     url=models.CharField(max_length=2048,unique=True)
+    type=models.CharField(max_length=4, default="jpg")
     user=models.ForeignKey('User', on_delete=models.CASCADE,max_length=4)
     class Meta:
         verbose_name="Document"
