@@ -433,7 +433,7 @@ class DocumentCruViewSet(viewsets.ModelViewSet):
         if self.request.method == 'PUT' or self.request.method == 'PATCH':
             return DocumentSerializerUpdate
         return DocumentSerializer
-    authentication_classes = [JWTAuthentication]
+    #authentication_classes = [JWTAuthentication]
 
 
 #USER ROLE CRUD

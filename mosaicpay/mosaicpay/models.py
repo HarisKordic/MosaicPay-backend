@@ -124,6 +124,8 @@ class Document(models.Model):
     url=models.CharField(max_length=2048,unique=True)
     type=models.CharField(max_length=4, default="jpg")
     user=models.ForeignKey('User', on_delete=models.CASCADE,max_length=4)
+    account=models.ForeignKey('Account', on_delete=models.CASCADE,max_length=4,null=True)
+
     class Meta:
         verbose_name="Document"
         verbose_name_plural="Documents"
