@@ -15,6 +15,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from custom_auth import JWTAuthentication
 from django.shortcuts import get_object_or_404
+from django.db.models import Subquery
 #REGISTER
 
 class RegisterViewSet(viewsets.ModelViewSet):
@@ -243,8 +244,22 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
 
+    
     def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
+        parse_user_view = ParseUserFromJwtTokenViewSet()
+        parse_user_response = parse_user_view.get(request)
+
+        if parse_user_response.status_code != 200:
+            return parse_user_response
+
+        user_data = parse_user_response.data
+        user_id = user_data['user_id']
+        
+        account_ids = Account.objects.filter(user_id=user_id).values_list('account_id', flat=True)
+        # Retrieve the account IDs for the given user and convert the result to a flat list
+        
+        queryset = Transaction.objects.filter(account_id__in=account_ids)
+        # Filter transactions based on the retrieved account IDs
         serializer = TransactionSerializer(queryset, many=True)
         data = serializer.data
 
