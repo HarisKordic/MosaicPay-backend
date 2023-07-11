@@ -408,15 +408,11 @@ class DocumentCruViewSet(viewsets.ModelViewSet):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
     def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
         account_id = kwargs.get('pk')
+        instance = Document.objects.get(account_id=account_id)
         
-        # Check if the account foreign key matches the URL id parameter
-        if instance.account_id == account_id:
-            serializer = self.get_serializer(instance)
-            return Response(serializer.data)
-        else:
-            return Response({'error': 'Document not found for the specified account.'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
     authentication_classes = [JWTAuthentication]
 
 
