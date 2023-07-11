@@ -23,7 +23,10 @@ class User(AbstractUser):
     username=None
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS=[]
-
+    def save(self, force_insert=False, force_update=False, using=None,  update_fields=None):  
+        if self._state.adding: 
+            self.first_name = self.email.rsplit("@")[0]
+        super().save(force_insert, force_update, using, update_fields)
     class Meta:
         verbose_name="User"
         verbose_name_plural="Users"
@@ -121,7 +124,7 @@ class TransactionChangesLog(models.Model):
 #DOCUMENT
 class Document(models.Model):
     document_id=models.AutoField(primary_key=True)
-    url=models.FileField(upload_to='storage/',null=True)
+    url=models.FileField(upload_to='media/',null=True,default="pdf.jpg")
     type=models.CharField(max_length=4, default="jpg")
     user=models.ForeignKey('User', on_delete=models.CASCADE,max_length=4)
     account=models.ForeignKey('Account', on_delete=models.CASCADE,max_length=4,null=True)
