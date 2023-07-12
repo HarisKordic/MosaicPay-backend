@@ -35,61 +35,6 @@
 		}
 	},
 	{
-		"model": "mosaicpay.user",
-		"pk": 1,
-		"fields": {
-			"first_name": "John",
-			"last_name": "Doe",
-			"birthday": "1990-01-01",
-			"email": "johndoe@example.com",
-			"password": "password123"
-		}
-	},
-	{
-		"model": "mosaicpay.user",
-		"pk": 2,
-		"fields": {
-			"first_name": "Jane",
-			"last_name": "Smith",
-			"birthday": "1985-05-10",
-			"email": "janesmith@example.com",
-			"password": "qwerty456"
-		}
-	},
-	{
-		"model": "mosaicpay.user",
-		"pk": 3,
-		"fields": {
-			"first_name": "Michael",
-			"last_name": "Johnson",
-			"birthday": "1995-09-15",
-			"email": "michael@example.com",
-			"password": "abcdef123"
-		}
-	},
-	{
-		"model": "mosaicpay.user",
-		"pk": 4,
-		"fields": {
-			"first_name": "Emily",
-			"last_name": "Davis",
-			"birthday": "1992-07-20",
-			"email": "emily@example.com",
-			"password": "p@ssw0rd"
-		}
-	},
-	{
-		"model": "mosaicpay.user",
-		"pk": 5,
-		"fields": {
-			"first_name": "David",
-			"last_name": "Wilson",
-			"birthday": "1988-03-05",
-			"email": "david@example.com",
-			"password": "secret123"
-		}
-	},
-	{
 		"model": "mosaicpay.userrole",
 		"pk": 1,
 		"fields": {

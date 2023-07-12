@@ -25,7 +25,8 @@ class User(AbstractUser):
     REQUIRED_FIELDS=[]
     def save(self, force_insert=False, force_update=False, using=None,  update_fields=None):  
         if self._state.adding: 
-            self.first_name = self.email.rsplit("@")[0]
+            if self.first_name=="":
+                self.first_name = self.email.rsplit("@")[0]
         super().save(force_insert, force_update, using, update_fields)
     class Meta:
         verbose_name="User"
