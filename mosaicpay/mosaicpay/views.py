@@ -257,7 +257,7 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
         
         account_ids = Account.objects.filter(user_id=user_id).values_list('account_id', flat=True)
         # Retrieve the account IDs for the given user and convert the result to a flat list
-        
+
         queryset = Transaction.objects.filter(account_id__in=account_ids)
         # Filter transactions based on the retrieved account IDs
         serializer = TransactionSerializer(queryset, many=True)
@@ -267,6 +267,9 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
             account_data = queryset[i].account
             account_serializer = AccountSerializer(account_data)
             transaction_data['account'] = account_serializer.data
+            document=Document.objects.get(account_id=account_data.account_id)
+            document_serializer=DocumentSerializer(document)
+            transaction_data['document']=document_serializer.data
 
         return Response(data)
 
@@ -366,7 +369,7 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
         if self.request.method == 'PUT' or self.request.method == 'PATCH':
             return TransactionSerializerUpdate
         return TransactionSerializer
-    authentication_classes = [JWTAuthentication]
+    #authentication_classes = [JWTAuthentication]
 
 #USER CRUD
 class UserCrudViewSet(viewsets.ModelViewSet):
