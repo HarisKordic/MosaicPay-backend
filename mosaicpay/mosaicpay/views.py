@@ -369,7 +369,7 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
         if self.request.method == 'PUT' or self.request.method == 'PATCH':
             return TransactionSerializerUpdate
         return TransactionSerializer
-    #authentication_classes = [JWTAuthentication]
+    authentication_classes = [JWTAuthentication]
 
 #USER CRUD
 class UserCrudViewSet(viewsets.ModelViewSet):
