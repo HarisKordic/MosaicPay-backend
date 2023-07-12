@@ -81,8 +81,28 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      frontend:
+        condition: service_healthy
     networks:
       - mosaicpay_network
+  frontend:
+    container_name: mosaicpayfrontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "true"]
+    depends_on:
+      - kafka
+      - zookeeper
+      - db
+    networks:
+      - mosaicpay_network
+    mem_limit: 6g
+    environment:
+      - NODE_OPTIONS=--max-old-space-size=4096
 
 networks:
   mosaicpay_network:

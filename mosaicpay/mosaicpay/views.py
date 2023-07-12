@@ -16,6 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 from custom_auth import JWTAuthentication
 from django.shortcuts import get_object_or_404
 from django.db.models import Subquery
+from django.core.exceptions import ObjectDoesNotExist
 #REGISTER
 
 class RegisterViewSet(viewsets.ModelViewSet):
@@ -267,9 +268,12 @@ class TransactionCrudViewSet(viewsets.ModelViewSet):
             account_data = queryset[i].account
             account_serializer = AccountSerializer(account_data)
             transaction_data['account'] = account_serializer.data
-            document=Document.objects.get(account_id=account_data.account_id)
-            document_serializer=DocumentSerializer(document)
-            transaction_data['document']=document_serializer.data
+            try:
+                document = Document.objects.get(account_id=account_data.account_id)
+                document_serializer = DocumentSerializer(document)
+                transaction_data['document'] = document_serializer.data
+            except ObjectDoesNotExist:
+                transaction_data['document'] = None  
 
         return Response(data)
 

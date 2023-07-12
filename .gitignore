@@ -1,7 +1,7 @@
 # Django project directories
 __pycache__/
 staticfiles/
-media/
+
 
 # Database
 *.sqlite3
