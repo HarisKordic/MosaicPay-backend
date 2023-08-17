@@ -1,0 +1,355 @@
+[
+	{
+		"model": "mosaicpay.test",
+		"pk": 1,
+		"fields": {
+			"value": 10
+		}
+	},
+	{
+		"model": "mosaicpay.test",
+		"pk": 2,
+		"fields": {
+			"value": 20
+		}
+	},
+	{
+		"model": "mosaicpay.test",
+		"pk": 3,
+		"fields": {
+			"value": 30
+		}
+	},
+	{
+		"model": "mosaicpay.test",
+		"pk": 4,
+		"fields": {
+			"value": 40
+		}
+	},
+	{
+		"model": "mosaicpay.test",
+		"pk": 5,
+		"fields": {
+			"value": 50
+		}
+	},
+	{
+		"model": "mosaicpay.userrole",
+		"pk": 1,
+		"fields": {
+			"name": "Admin"
+		}
+	},
+	{
+		"model": "mosaicpay.userrole",
+		"pk": 2,
+		"fields": {
+			"name": "User"
+		}
+	},
+	{
+		"model": "mosaicpay.userroleuser",
+		"pk": 1,
+		"fields": {
+			"user": 1,
+			"user_role": 1
+		}
+	},
+	{
+		"model": "mosaicpay.userroleuser",
+		"pk": 2,
+		"fields": {
+			"user": 2,
+			"user_role": 2
+		}
+	},
+	{
+		"model": "mosaicpay.userroleuser",
+		"pk": 3,
+		"fields": {
+			"user": 3,
+			"user_role": 2
+		}
+	},
+	{
+		"model": "mosaicpay.userroleuser",
+		"pk": 4,
+		"fields": {
+			"user": 4,
+			"user_role": 2
+		}
+	},
+	{
+		"model": "mosaicpay.userroleuser",
+		"pk": 5,
+		"fields": {
+			"user": 5,
+			"user_role": 2
+		}
+	},
+	{
+		"model": "mosaicpay.account",
+		"pk": 1,
+		"fields": {
+			"name": "Savings Account",
+			"balance": 5000.0,
+			"user": 1
+		}
+	},
+	{
+		"model": "mosaicpay.account",
+		"pk": 2,
+		"fields": {
+			"name": "Checking Account",
+			"balance": 10000.0,
+			"user": 2
+		}
+	},
+	{
+		"model": "mosaicpay.account",
+		"pk": 3,
+		"fields": {
+			"name": "Investment Account",
+			"balance": 20000.0,
+			"user": 3
+		}
+	},
+	{
+		"model": "mosaicpay.account",
+		"pk": 4,
+		"fields": {
+			"name": "Credit Card",
+			"balance": -5000.0,
+			"user": 4
+		}
+	},
+	{
+		"model": "mosaicpay.account",
+		"pk": 5,
+		"fields": {
+			"name": "Business Account",
+			"balance": 100000.0,
+			"user": 5
+		}
+	},
+	{
+		"model": "mosaicpay.accountchangeslog",
+		"pk": 1,
+		"fields": {
+			"change_type": "Deposit",
+			"change_date": "2023-06-30",
+			"changed_by_user": 1,
+			"account": 1
+		}
+	},
+	{
+		"model": "mosaicpay.accountchangeslog",
+		"pk": 2,
+		"fields": {
+			"change_type": "Withdrawal",
+			"change_date": "2023-07-01",
+			"changed_by_user": 2,
+			"account": 2
+		}
+	},
+	{
+		"model": "mosaicpay.accountchangeslog",
+		"pk": 3,
+		"fields": {
+			"change_type": "Deposit",
+			"change_date": "2023-07-02",
+			"changed_by_user": 3,
+			"account": 3
+		}
+	},
+	{
+		"model": "mosaicpay.accountchangeslog",
+		"pk": 4,
+		"fields": {
+			"change_type": "Withdrawal",
+			"change_date": "2023-07-03",
+			"changed_by_user": 4,
+			"account": 4
+		}
+	},
+	{
+		"model": "mosaicpay.accountchangeslog",
+		"pk": 5,
+		"fields": {
+			"change_type": "Deposit",
+			"change_date": "2023-07-04",
+			"changed_by_user": 5,
+			"account": 5
+		}
+	},
+	{
+		"model": "mosaicpay.transaction",
+		"pk": 1,
+		"fields": {
+			"type": "C",
+			"amount": 1000.0,
+			"account": 1,
+			"transaction_state": 1
+		}
+	},
+	{
+		"model": "mosaicpay.transaction",
+		"pk": 2,
+		"fields": {
+			"type": "D",
+			"amount": 500.0,
+			"account": 2,
+			"transaction_state": 2
+		}
+	},
+	{
+		"model": "mosaicpay.transaction",
+		"pk": 3,
+		"fields": {
+			"type": "C",
+			"amount": 2000.0,
+			"account": 3,
+			"transaction_state": 1
+		}
+	},
+	{
+		"model": "mosaicpay.transaction",
+		"pk": 4,
+		"fields": {
+			"type": "D",
+			"amount": 1000.0,
+			"account": 4,
+			"transaction_state": 2
+		}
+	},
+	{
+		"model": "mosaicpay.transaction",
+		"pk": 5,
+		"fields": {
+			"type": "C",
+			"amount": 5000.0,
+			"account": 5,
+			"transaction_state": 1
+		}
+	},
+	{
+		"model": "mosaicpay.transactionstate",
+		"pk": 1,
+		"fields": {
+			"name": "Draft"
+		}
+	},
+	{
+		"model": "mosaicpay.transactionstate",
+		"pk": 2,
+		"fields": {
+			"name": "Pending"
+		}
+	},
+	{
+		"model": "mosaicpay.transactionstate",
+		"pk": 3,
+		"fields": {
+			"name": "Processed"
+		}
+	},
+	{
+		"model": "mosaicpay.transactionstate",
+		"pk": 4,
+		"fields": {
+			"name": "Failed"
+		}
+	},
+	{
+		"model": "mosaicpay.transactionchangeslog",
+		"pk": 1,
+		"fields": {
+			"change_type": "Status Update",
+			"change_date": "2023-07-02",
+			"changed_by_user": 1,
+			"transaction": 1
+		}
+	},
+	{
+		"model": "mosaicpay.transactionchangeslog",
+		"pk": 2,
+		"fields": {
+			"change_type": "Cancellation",
+			"change_date": "2023-07-03",
+			"changed_by_user": 2,
+			"transaction": 2
+		}
+	},
+	{
+		"model": "mosaicpay.transactionchangeslog",
+		"pk": 3,
+		"fields": {
+			"change_type": "Status Update",
+			"change_date": "2023-07-04",
+			"changed_by_user": 3,
+			"transaction": 3
+		}
+	},
+	{
+		"model": "mosaicpay.transactionchangeslog",
+		"pk": 4,
+		"fields": {
+			"change_type": "Cancellation",
+			"change_date": "2023-07-04",
+			"changed_by_user": 4,
+			"transaction": 4
+		}
+	},
+	{
+		"model": "mosaicpay.transactionchangeslog",
+		"pk": 5,
+		"fields": {
+			"change_type": "Status Update",
+			"change_date": "2023-07-04",
+			"changed_by_user": 5,
+			"transaction": 5
+		}
+	},
+
+	{
+		"model": "mosaicpay.document",
+		"pk": 1,
+		"fields": {
+			"user": 1,
+			"account": 1
+		}
+	},
+	{
+		"model": "mosaicpay.document",
+		"pk": 2,
+		"fields": {
+			"user": 2,
+			"account": 2
+		}
+	},
+	{
+		"model": "mosaicpay.document",
+		"pk": 3,
+		"fields": {
+			"user": 3,
+			"account": 3
+		}
+	},
+	{
+		"model": "mosaicpay.document",
+		"pk": 4,
+		"fields": {
+			"user": 4,
+			"account": 4
+		}
+	},
+	{
+		"model": "mosaicpay.document",
+		"pk": 5,
+		"fields": {
+			"user": 5,
+			"account": 5
+		}
+	}
+]
